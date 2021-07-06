@@ -63,3 +63,40 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+const refs = {
+  openModalWindow: document.querySelector('js-gallery'),
+  closeModalBtn: document.querySelector('[data-action="close-lightbox"]'),
+  backdrop: document.querySelector('js-lightbox'),
+  modalImage: document.querySelector('.lightbox__image'),
+  closeModalLightbox: document.querySelector('.lightbox__overlay'),
+}
+const cardsMarkup = createImages(galleryItems);
+
+refs.openMadalWindow.innerHTML = cardsMarkup;
+refs.ppenModalWindow.addEventListener('click', onOpenModal);
+refs.closeModalBtn.addEventLestener('click', onCloseModal);
+refs.closeModalLightbox.addEventListener('click', onCloceModal);
+
+const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+
+lazyImages.forEach(image => {
+  image.addEventListener('load', onImageLoaded);
+});
+function onImageLoaded(event) {
+  console.log('картинка завантажилась');
+  console.log(event.target);
+}
+function createImages(gallegyItems) {
+  return galleryItems.map(({ preview, original, description }) => {
+    return `<li class="gallery__item">
+    <a class = "gallery__link"
+    href = '${original}'>
+    <img loading="lazy"
+    class="gallery__image"
+    src="${preview}"
+    data-source="${description}">
+    </a>
+    </li>`;
+  })
+  .join('');
+  }
