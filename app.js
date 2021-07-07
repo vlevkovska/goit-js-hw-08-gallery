@@ -64,7 +64,7 @@ const galleryItems = [
   },
 ];
 const refs = {
-  openModalWindow: document.querySelector('js-gallery'),
+  openModalWindow: document.querySelector('.js-gallery'),
   closeModalBtn: document.querySelector('[data-action="close-lightbox"]'),
   backdrop: document.querySelector('js-lightbox'),
   modalImage: document.querySelector('.lightbox__image'),
@@ -72,7 +72,7 @@ const refs = {
 }
 const cardsMarkup = createImages(galleryItems);
 
-refs.openMadalWindow.innerHTML = cardsMarkup;
+refs.openModalWindow.innerHTML = cardsMarkup;
 refs.ppenModalWindow.addEventListener('click', onOpenModal);
 refs.closeModalBtn.addEventLestener('click', onCloseModal);
 refs.closeModalLightbox.addEventListener('click', onCloceModal);
@@ -83,20 +83,109 @@ lazyImages.forEach(image => {
   image.addEventListener('load', onImageLoaded);
 });
 function onImageLoaded(event) {
-  console.log('картинка завантажилась');
-  console.log(event.target);
+  // console.log('картинка завантажилась');
+  // console.log(event.target);
 }
-function createImages(gallegyItems) {
-  return galleryItems.map(({ preview, original, description }) => {
-    return `<li class="gallery__item">
-    <a class = "gallery__link"
-    href = '${original}'>
-    <img loading="lazy"
-    class="gallery__image"
-    src="${preview}"
-    data-source="${description}">
-    </a>
-    </li>`;
-  })
-  .join('');
+function createImages(galleryItems) {
+  return galleryItems
+    .map(({ preview, original, description }) => {
+      return `<li class="gallery__item">
+  <a
+    class="gallery__link"
+    href = '${original}';
+  >
+    <img
+    loading="lazy"
+      class="gallery__image"
+     src="${preview}"
+  data-source="${original}"
+      alt="${description}"
+    />
+  </a>
+</li>`;
+    })
+    .join("");
+}
+  
+function onOpenModal(event) {
+  const nextActiveImg = event.target;
+  const isGalleryImage = nextActivImg.classList.containg('gallery__image');
+  if (!isGalleryImage) {
+    return;
   }
+  refs.backdrop.classList.add('is-open');
+  refs.modalImage.src = nextActiveImg.dataset.source;
+  event.preventDefault();
+  window.addEventListener('keydown', onEsc);
+  window.addEventListener('keydown', onArrowRight);
+  window.addEventListener('keydown', onArrowLeft);
+}
+function onCloseModal() {
+  refs.backdrop.classList.remove('is-open');
+  refs.modalImage.src = '';
+  window.removeEventListener('keydown', onEsc);
+  window.removeEventListener('keydown', onArrowRight);
+  window.addEventListener('keydown', onArrowLeft);
+}
+// закриваємо по ESC
+function onEsc(evn) {
+  const ESC_KEY_CODE = 'Escape';
+  const isEscKey = evn.code === ESC_KEY_CODE;
+  if (isEscKey) {
+    onCloseModal();
+  }
+}
+
+// переключаем стрелочками тик тидик)
+const findImageIndex = () => {
+  const src = document.querySelector('.lightbox__image').src;
+  return galleryItems.findIndex(image => image.original === src);
+};
+const changeImg = imageIndex => {
+  const elem = galleryItems.find(function (value, index) {
+    if (imageIndex === index) return value;
+  });
+  console.log('elem', elem.original);
+  document.querySelector('.lightbox__image').src = elem.original;
+};
+const maxLength = galleryItems.length;
+const previousImg = () => {
+  let imageIndex = findImageIndex();
+  imageIndex <= 0 ? (imageIndex = maxLength - 1) : imageIndex--;
+  changeImg(imageIndex);
+};
+const nextImg = () => {
+  let imageIndex = findImageIndex();
+  let nextImageIndex = imageIndex + 1;
+  nextImageIndex >= maxLength ? (imageIndex = 0) : imageIndex++;
+  changeImg(imageIndex);
+};
+function onArrowRight(evn) {
+  if (evn.code === 'ArrowRight') {
+    nextImg();
+  }
+}
+function onArrowLeft(evn) {
+  if (evn.code === 'ArrowLeft') {
+    previousImg();
+  }
+}
+
+// переключатєль стрелкою
+// function nexImg(evn) {
+//   console.log(evn);
+//   const ARROWRIGHT_KEY_CODE = 'ArrowRight';
+//   const isArrowRightKey = evn.code === ARROWRIGHT_KEY_CODE;
+//   if (isArrowRightKey) {
+//     onCloseModal();
+//   }
+// }
+
+// function previousImg(evn) {
+//   console.log(evn);
+//   const ARROWLEFT_KEY_CODE = 'ArrowLeft';
+//   const isArrowLeftKey = evn.code === ARROWLEFT_KEY_CODE;
+//   if (isArrowLeftKey) {
+//     onCloseModal();
+//   }
+// }
