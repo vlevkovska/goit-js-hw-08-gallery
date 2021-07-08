@@ -64,18 +64,18 @@ const galleryItems = [
   },
 ];
 const refs = {
-  openModalWindow: document.querySelector(".js-gallery"),
-  closeModalBtn: document.querySelector('[data-action="close-lightbox"]'),
-  backdrop: document.querySelector(".js-lightbox"),
-  modalImage: document.querySelector(".lightbox__image"),
-  closeModalLightbox: document.querySelector(".lightbox__overlay"),
+  openGallery: document.querySelector(".js-gallery"),
+  closeBtn: document.querySelector('[data-action="close-lightbox"]'),
+  lightbox: document.querySelector(".js-lightbox"),
+  image: document.querySelector(".lightbox__image"),
+  closeOverlay: document.querySelector(".lightbox__overlay"),
 };
 const cardsMarkup = createImages(galleryItems);
 
-refs.openModalWindow.innerHTML = cardsMarkup;
-refs.openModalWindow.addEventListener("click", onOpenModal);
-refs.closeModalBtn.addEventListener("click", onCloseModal);
-refs.closeModalLightbox.addEventListener("click", onCloseModal);
+refs.openGallery.innerHTML = cardsMarkup;
+refs.openGallery.addEventListener("click", onOpenGallery);
+refs.closeBtn.addEventListener("click", onCloseGallery);
+refs.closeOverlay.addEventListener("click", onCloseGallery);
 
 const lazyImages = document.querySelectorAll('img[loading="lazy"]');
 
@@ -107,22 +107,22 @@ function createImages(galleryItems) {
     .join("");
 }
 
-function onOpenModal(event) {
+function onOpenGallery(event) {
   const nextActiveImg = event.target;
   const isGalleryImage = nextActiveImg.classList.contains("gallery__image");
   if (!isGalleryImage) {
     return;
   }
-  refs.backdrop.classList.add("is-open");
-  refs.modalImage.src = nextActiveImg.dataset.source;
+  refs.lightbox.classList.add("is-open");
+  refs.image.src = nextActiveImg.dataset.source;
   event.preventDefault();
   window.addEventListener("keydown", onEsc);
   window.addEventListener("keydown", onArrowRight);
   window.addEventListener("keydown", onArrowLeft);
 }
-function onCloseModal() {
-  refs.backdrop.classList.remove("is-open");
-  refs.modalImage.src = "";
+function onCloseGallery() {
+  refs.lightbox.classList.remove("is-open");
+  refs.image.src = "";
   window.removeEventListener("keydown", onEsc);
   window.removeEventListener("keydown", onArrowRight);
   window.addEventListener("keydown", onArrowLeft);
@@ -132,7 +132,7 @@ function onEsc(evn) {
   const ESC_KEY_CODE = "Escape";
   const isEscKey = evn.code === ESC_KEY_CODE;
   if (isEscKey) {
-    onCloseModal();
+    onCloseGallery();
   }
 }
 
